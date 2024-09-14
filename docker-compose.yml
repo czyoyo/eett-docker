@@ -1,0 +1,59 @@
+services:
+  mysql:
+    image: mariadb:lts
+    container_name: et_mysql
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: ez!@3232323
+        MYSQL_DATABASE: ez
+        MYSQL_USER: user
+        MYSQL_PASSWORD: ez!@3232323
+        TZ: Asia/Seoul
+        MYSQL_ROOT_HOST: "%"
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    command:
+        - --character-set-server=utf8mb4
+        - --collation-server=utf8mb4_unicode_ci
+
+    networks:
+      - et_network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+
+  redis:
+    image: redis:7.2.4
+    container_name: et_redis
+    volumes:
+      - ./volumes/redis/data:/data
+      - ./redis/usr/local/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/var/run:/var/run
+
+    ports:
+      - "6379:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+    environment:
+      - TZ=Asia/Seoul
+
+    networks:
+      - et_network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+networks:
+  et_network:
+    name: et_network
+    driver: bridge
+
